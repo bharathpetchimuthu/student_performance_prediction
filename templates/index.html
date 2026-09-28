@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Student Academic Performance Prediction
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<div class="page-container">
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <header class="main-header">
+
+        <div class="header-icon">
+            🎓
+        </div>
+
+        <div>
+
+            <h1>
+                Student Academic Performance Prediction
+            </h1>
+
+            <p>
+                Upload your dataset or enter student details manually
+                to predict academic performance.
+            </p>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================================================= -->
+    <!-- FLASH MESSAGES -->
+    <!-- ================================================= -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div
+                    class="flash-message {{ category }}"
+                >
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- ================================================= -->
+    <!-- TWO MODES -->
+    <!-- ================================================= -->
+
+    <div class="mode-grid">
+
+
+        <!-- ============================================= -->
+        <!-- DATASET MODE -->
+        <!-- ============================================= -->
+
+        <section class="mode-card">
+
+            <div class="mode-icon blue-icon">
+                📊
+            </div>
+
+            <h2>
+                Dataset Mode
+            </h2>
+
+            <p class="mode-description">
+
+                Upload a CSV or Excel dataset and automatically
+                train machine learning models to predict student
+                academic performance.
+
+            </p>
+
+
+            <form
+                action="{{ url_for('predict_dataset') }}"
+                method="POST"
+                enctype="multipart/form-data"
+            >
+
+                <div class="file-box">
+
+                    <label for="dataset">
+                        Select Dataset
+                    </label>
+
+                    <input
+                        type="file"
+                        id="dataset"
+                        name="dataset"
+                        accept=".csv,.xlsx,.xls"
+                        required
+                    >
+
+                    <small>
+                        Supported: CSV, XLSX, XLS
+                    </small>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn blue-button"
+                >
+
+                    🚀 Upload & Predict
+
+                </button>
+
+            </form>
+
+        </section>
+
+
+
+        <!-- ============================================= -->
+        <!-- MANUAL MODE -->
+        <!-- ============================================= -->
+
+        <section class="mode-card">
+
+            <div class="mode-icon green-icon">
+                🧑‍🎓
+            </div>
+
+            <h2>
+                Manual Mode
+            </h2>
+
+            <p class="mode-description">
+
+                Enter student details manually for a quick
+                academic performance prediction.
+
+            </p>
+
+
+            <form
+                action="{{ url_for('manual_prediction') }}"
+                method="POST"
+                id="manualForm"
+            >
+
+
+                <!-- Student Name -->
+
+                <div class="input-group">
+
+                    <label>
+                        Student Name
+                    </label>
+
+                    <input
+                        type="text"
+                        name="student_name"
+                        placeholder="Enter student name"
+                    >
+
+                </div>
+
+
+                <!-- Study Hours -->
+
+                <div class="input-group">
+
+                    <label>
+                        Study Hours
+                    </label>
+
+                    <input
+                        type="number"
+                        name="study_hours"
+                        id="study_hours"
+                        min="0"
+                        max="24"
+                        step="0.5"
+                        placeholder="Example: 6"
+                        required
+                    >
+
+                    <small>
+                        Enter study hours per day (0 - 24)
+                    </small>
+
+                </div>
+
+
+                <!-- Attendance -->
+
+                <div class="input-group">
+
+                    <label>
+                        Attendance Percentage
+                    </label>
+
+                    <input
+                        type="number"
+                        name="attendance"
+                        id="attendance"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        placeholder="Example: 85"
+                        required
+                    >
+
+                    <small>
+                        Enter attendance percentage (0 - 100)
+                    </small>
+
+                </div>
+
+
+                <!-- Previous Marks -->
+
+                <div class="input-group">
+
+                    <label>
+                        Previous Marks
+                    </label>
+
+                    <input
+                        type="number"
+                        name="previous_marks"
+                        id="previous_marks"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        placeholder="Example: 72"
+                        required
+                    >
+
+                    <small>
+                        Previous examination marks (0 - 100)
+                    </small>
+
+                </div>
+
+
+                <!-- Assignment -->
+
+                <div class="input-group">
+
+                    <label>
+                        Assignment Score
+                    </label>
+
+                    <input
+                        type="number"
+                        name="assignment_score"
+                        id="assignment_score"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        placeholder="Example: 80"
+                        required
+                    >
+
+                    <small>
+                        Assignment score (0 - 100)
+                    </small>
+
+                </div>
+
+
+                <!-- Summary -->
+
+                <div class="live-summary">
+
+                    <h3>
+                        📊 Marks Summary
+                    </h3>
+
+                    <div class="summary-row">
+
+                        <span>
+                            Study Hours
+                        </span>
+
+                        <strong id="summaryStudy">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>
+                            Attendance
+                        </span>
+
+                        <strong id="summaryAttendance">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>
+                            Previous Marks
+                        </span>
+
+                        <strong id="summaryPrevious">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>
+                            Assignment
+                        </span>
+
+                        <strong id="summaryAssignment">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn green-button"
+                >
+
+                    🔮 Predict Manually
+
+                </button>
+
+            </form>
+
+        </section>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- INFORMATION -->
+    <!-- ================================================= -->
+
+    <section class="info-section">
+
+        <h2>
+            How the System Works
+        </h2>
+
+        <div class="info-grid">
+
+            <div>
+                <strong>
+                    01
+                </strong>
+
+                <p>
+                    Dataset Mode
+                </p>
+
+                <span>
+                    Upload your student dataset.
+                </span>
+            </div>
+
+
+            <div>
+                <strong>
+                    02
+                </strong>
+
+                <p>
+                    Data Processing
+                </p>
+
+                <span>
+                    Missing values and categorical data are handled automatically.
+                </span>
+            </div>
+
+
+            <div>
+                <strong>
+                    03
+                </strong>
+
+                <p>
+                    Machine Learning
+                </p>
+
+                <span>
+                    Multiple ML algorithms are trained and compared.
+                </span>
+            </div>
+
+
+            <div>
+                <strong>
+                    04
+                </strong>
+
+                <p>
+                    Prediction
+                </p>
+
+                <span>
+                    The system predicts PASS/FAIL and risk level.
+                </span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+</div>
+
+
+<script
+    src="{{ url_for('static', filename='js/script.js') }}"
+></script>
+
+</body>
+
+</html>

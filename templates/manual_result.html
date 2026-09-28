@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Manual Prediction Result</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+
+            margin: 0;
+
+            font-family: Arial, sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eef4ff,
+                    #f8fbff
+                );
+
+            min-height: 100vh;
+
+            color: #172033;
+        }
+
+        .container {
+
+            width: 92%;
+
+            max-width: 900px;
+
+            margin: 40px auto;
+        }
+
+        .header {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #1769ff,
+                    #1248d8
+                );
+
+            color: white;
+
+            padding: 30px;
+
+            border-radius: 20px;
+
+            text-align: center;
+
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+
+            margin: 0 0 10px;
+
+            font-size: 30px;
+        }
+
+        .header p {
+
+            margin: 0;
+
+            opacity: .9;
+        }
+
+        .result-card {
+
+            background: white;
+
+            border-radius: 20px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 10px 35px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .10
+                );
+        }
+
+        .student-name {
+
+            text-align: center;
+
+            font-size: 22px;
+
+            font-weight: bold;
+
+            margin-bottom: 25px;
+        }
+
+        .main-result {
+
+            text-align: center;
+
+            padding: 30px;
+
+            border-radius: 18px;
+
+            background: #f4f7ff;
+
+            margin-bottom: 25px;
+        }
+
+        .mark {
+
+            font-size: 55px;
+
+            font-weight: bold;
+
+            color: #1769ff;
+        }
+
+        .out-of {
+
+            color: #666;
+
+            font-size: 18px;
+        }
+
+        .pass {
+
+            display: inline-block;
+
+            margin-top: 15px;
+
+            padding: 10px 25px;
+
+            border-radius: 30px;
+
+            background: #d9f8e5;
+
+            color: #12833b;
+
+            font-size: 20px;
+
+            font-weight: bold;
+        }
+
+        .fail {
+
+            display: inline-block;
+
+            margin-top: 15px;
+
+            padding: 10px 25px;
+
+            border-radius: 30px;
+
+            background: #ffe0e0;
+
+            color: #d32222;
+
+            font-size: 20px;
+
+            font-weight: bold;
+        }
+
+        .grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    1fr
+                );
+
+            gap: 15px;
+
+            margin-bottom: 25px;
+        }
+
+        .box {
+
+            padding: 18px;
+
+            background: #f7f9fd;
+
+            border-radius: 12px;
+
+            border: 1px solid #e4e9f2;
+        }
+
+        .box-title {
+
+            color: #666;
+
+            font-size: 14px;
+
+            margin-bottom: 7px;
+        }
+
+        .box-value {
+
+            font-size: 22px;
+
+            font-weight: bold;
+
+            color: #172033;
+        }
+
+        .recommendation {
+
+            padding: 20px;
+
+            border-radius: 12px;
+
+            background: #eef5ff;
+
+            border-left: 5px solid #1769ff;
+
+            margin-bottom: 25px;
+        }
+
+        .recommendation h3 {
+
+            margin-top: 0;
+
+            color: #1769ff;
+        }
+
+        .button {
+
+            display: inline-block;
+
+            background: #1769ff;
+
+            color: white;
+
+            text-decoration: none;
+
+            padding: 13px 25px;
+
+            border-radius: 9px;
+
+            font-weight: bold;
+        }
+
+        .button:hover {
+
+            background: #0f50c9;
+        }
+
+        .center {
+
+            text-align: center;
+        }
+
+        @media(max-width: 600px) {
+
+            .grid {
+
+                grid-template-columns: 1fr;
+            }
+
+            .mark {
+
+                font-size: 42px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <h1>
+            🎯 Manual Prediction Result
+        </h1>
+
+        <p>
+            Student Academic Performance Prediction
+        </p>
+
+    </div>
+
+
+    <div class="result-card">
+
+
+        <!-- STUDENT -->
+
+        <div class="student-name">
+
+            {% if student_name %}
+
+                👨‍🎓 {{ student_name }}
+
+            {% else %}
+
+                👨‍🎓 Student
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- MAIN RESULT -->
+
+        <div class="main-result">
+
+            <div class="mark">
+
+                {{ estimated_mark }}
+
+            </div>
+
+            <div class="out-of">
+
+                Estimated Academic Score / 100
+
+            </div>
+
+
+            {% if prediction == "PASS" %}
+
+                <div class="pass">
+
+                    ✅ PASS
+
+                </div>
+
+            {% else %}
+
+                <div class="fail">
+
+                    ❌ FAIL
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- INPUT SUMMARY -->
+
+        <div class="grid">
+
+
+            <div class="box">
+
+                <div class="box-title">
+                    📚 Study Hours
+                </div>
+
+                <div class="box-value">
+
+                    {{ study_hours }}
+
+                    hours/day
+
+                </div>
+
+            </div>
+
+
+            <div class="box">
+
+                <div class="box-title">
+                    📅 Attendance
+                </div>
+
+                <div class="box-value">
+
+                    {{ attendance }}%
+
+                </div>
+
+            </div>
+
+
+            <div class="box">
+
+                <div class="box-title">
+                    📝 Previous Marks
+                </div>
+
+                <div class="box-value">
+
+                    {{ previous_marks }}%
+
+                </div>
+
+            </div>
+
+
+            <div class="box">
+
+                <div class="box-title">
+                    📋 Assignment Score
+                </div>
+
+                <div class="box-value">
+
+                    {{ assignment_score }}%
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- PREDICTION DETAILS -->
+
+        <div class="grid">
+
+
+            <div class="box">
+
+                <div class="box-title">
+                    PASS Probability
+                </div>
+
+                <div class="box-value">
+
+                    {{ pass_probability }}%
+
+                </div>
+
+            </div>
+
+
+            <div class="box">
+
+                <div class="box-title">
+                    FAIL Probability
+                </div>
+
+                <div class="box-value">
+
+                    {{ fail_probability }}%
+
+                </div>
+
+            </div>
+
+
+            <div class="box">
+
+                <div class="box-title">
+                    Risk Level
+                </div>
+
+                <div class="box-value">
+
+                    {{ risk_level }}
+
+                </div>
+
+            </div>
+
+
+            <div class="box">
+
+                <div class="box-title">
+                    Final Prediction
+                </div>
+
+                <div class="box-value">
+
+                    {{ prediction }}
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- RECOMMENDATION -->
+
+        <div class="recommendation">
+
+            <h3>
+                💡 Recommendation
+            </h3>
+
+            <p>
+                {{ recommendation }}
+            </p>
+
+        </div>
+
+
+        <div class="center">
+
+            <a
+                href="{{ url_for('index') }}"
+                class="button"
+            >
+                ← Back to Prediction
+            </a>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

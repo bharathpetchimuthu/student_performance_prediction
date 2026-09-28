@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Dataset Prediction Result</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f6ff;
+            color: #172033;
+        }
+
+        .container {
+            width: 94%;
+            max-width: 1400px;
+            margin: 30px auto;
+        }
+
+        .header {
+            background: linear-gradient(
+                135deg,
+                #1769ff,
+                #1248d8
+            );
+
+            color: white;
+
+            padding: 28px;
+
+            border-radius: 18px;
+
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin: 0 0 8px;
+        }
+
+        .header p {
+            margin: 0;
+            opacity: .9;
+        }
+
+        .cards {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    4,
+                    1fr
+                );
+
+            gap: 18px;
+
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+
+            padding: 22px;
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 5px 20px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .08
+                );
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #555;
+        }
+
+        .number {
+            font-size: 30px;
+            font-weight: bold;
+            color: #1769ff;
+        }
+
+        .section {
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 15px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 5px 20px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .08
+                );
+
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #1769ff;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 11px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f5f8ff;
+        }
+
+        .pass {
+            color: #159447;
+            font-weight: bold;
+        }
+
+        .fail {
+            color: #e03131;
+            font-weight: bold;
+        }
+
+        .low {
+            color: #159447;
+            font-weight: bold;
+        }
+
+        .medium {
+            color: #d78a00;
+            font-weight: bold;
+        }
+
+        .high {
+            color: #e03131;
+            font-weight: bold;
+        }
+
+        .button {
+            display: inline-block;
+
+            padding: 12px 22px;
+
+            background: #1769ff;
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 8px;
+
+            margin-top: 10px;
+        }
+
+        .button:hover {
+            background: #0f50c9;
+        }
+
+        @media(max-width: 900px) {
+
+            .cards {
+                grid-template-columns:
+                    repeat(
+                        2,
+                        1fr
+                    );
+            }
+        }
+
+        @media(max-width: 600px) {
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>
+            📊 Dataset Prediction Result
+        </h1>
+
+        <p>
+            Student Academic Performance Analysis
+        </p>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="cards">
+
+        <div class="card">
+
+            <h3>
+                Total Students
+            </h3>
+
+            <div class="number">
+                {{ total_students }}
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                PASS
+            </h3>
+
+            <div class="number">
+                {{ pass_count }}
+            </div>
+
+            <p>
+                {{ pass_percentage }}%
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                FAIL
+            </h3>
+
+            <div class="number">
+                {{ fail_count }}
+            </div>
+
+            <p>
+                {{ fail_percentage }}%
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                Best Model
+            </h3>
+
+            <div style="font-size:20px;font-weight:bold;">
+                {{ best_model }}
+            </div>
+
+            <p>
+                Target: {{ target }}
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- MODEL COMPARISON -->
+
+    <div class="section">
+
+        <h2>
+            🤖 Model Comparison
+        </h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Model</th>
+
+                    <th>Accuracy</th>
+
+                    <th>Precision</th>
+
+                    <th>Recall</th>
+
+                    <th>F1 Score</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for row in comparison.itertuples() %}
+
+                <tr>
+
+                    <td>
+                        {{ row.Model }}
+                    </td>
+
+                    <td>
+                        {{ row.Accuracy }}%
+                    </td>
+
+                    <td>
+                        {{ row.Precision }}%
+                    </td>
+
+                    <td>
+                        {{ row.Recall }}%
+                    </td>
+
+                    <td>
+                        {{ row._4 }}%
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- STUDENT PREDICTIONS -->
+
+    <div class="section">
+
+        <h2>
+            🎓 Student Predictions
+        </h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Student</th>
+
+                    <th>Prediction</th>
+
+                    <th>Pass Probability</th>
+
+                    <th>Fail Probability</th>
+
+                    <th>Risk</th>
+
+                    <th>Recommendation</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for row in predictions.to_dict('records') %}
+
+                <tr>
+
+                    <td>
+                        {{ row.Student_Number }}
+                    </td>
+
+                    <td>
+
+                        {% if row.Prediction == "PASS" %}
+
+                            <span class="pass">
+                                ✅ PASS
+                            </span>
+
+                        {% else %}
+
+                            <span class="fail">
+                                ❌ FAIL
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+                        {{ row.Pass_Probability }}%
+                    </td>
+
+                    <td>
+                        {{ row.Fail_Probability }}%
+                    </td>
+
+                    <td>
+
+                        {% if row.Risk_Level == "LOW" %}
+
+                            <span class="low">
+                                LOW
+                            </span>
+
+                        {% elif row.Risk_Level == "MEDIUM" %}
+
+                            <span class="medium">
+                                MEDIUM
+                            </span>
+
+                        {% else %}
+
+                            <span class="high">
+                                HIGH
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+                        {{ row.Recommendation }}
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <a
+        href="{{ url_for('index') }}"
+        class="button"
+    >
+        ← Back to Prediction
+    </a>
+
+</div>
+
+</body>
+
+</html>
